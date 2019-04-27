@@ -1,0 +1,60 @@
+# example https://gist.github.com/AO8/d37a603f0121e8573dd0154595ab0460
+
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+
+# use creds to create a client to interact with the Google Drive API
+scope = ['https://spreadsheets.google.com/feeds']
+creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
+client = gspread.authorize(creds)
+
+DOC_URL = 'https://docs.google.com/spreadsheets/d/1OWlfNxkdwPh8ZfyDk0rY1pprt9KwALMmCkfB2WUcge4/edit#gid=0'
+
+sheet = client.open_by_url(DOC_URL).sheet1
+
+# get a list of lists if you'd prefer
+list_of_hashes = sheet.col_values(1)
+list_of_imei = sheet.col_values(2)
+
+
+HASH = "555"
+IMEI = "IMEI for Test"
+
+
+def check_hash(hash, list_of_hashes):
+    if hash in list_of_hashes:
+        print("HASH существует.")
+        return True
+    else:
+        print("HASH не существует.")
+        return False
+
+
+def check_imei(imei, list_of_imei):
+    if imei in list_of_imei:
+        print("IMEI уже используеться.")
+        return True
+    else:
+        print("IMEI не используеться.")
+        return False
+
+
+def get_index_of_hash(hash, list_of_hashes):
+    return list_of_hashes.index(hash)
+
+
+def write_key_imei_pair(hash, imei):
+    try:
+        column = 2
+        index = get_index_of_hash(hash, list_of_hashes)
+        row = index + 1
+        sheet.update_cell(row, column, imei)
+        print("IMEI " + imei +  " был присвоен HASH коду " + hash )
+    except Exception as e:
+        print("Ошибка записи")
+        print(e)
+
+
+check_hash(HASH, list_of_hashes)
+check_imei(IMEI, list_of_imei)
+write_key_imei_pair(HASH, IMEI)
