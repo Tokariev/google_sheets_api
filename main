@@ -49,7 +49,7 @@ def write_key_imei_pair(hash, imei):
         index = get_index_of_hash(hash, list_of_hashes)
         row = index + 1
         sheet.update_cell(row, column, imei)
-        print("IMEI " + imei +  " был присвоен HASH коду " + hash )
+        print("IMEI: " + imei +  " был присвоен HASH коду: " + hash )
     except Exception as e:
         print("Ошибка записи")
         print(e)
